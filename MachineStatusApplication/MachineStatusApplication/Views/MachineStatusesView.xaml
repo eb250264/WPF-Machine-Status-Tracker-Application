@@ -1,0 +1,207 @@
+﻿<Window x:Class="MachineStatusApplication.Views.MachineStatusesView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MachineStatusApplication.Views"
+        mc:Ignorable="d" x:Name="myWindow"
+        xmlns:controls="clr-namespace:MachineStatusApplication.Controls"
+        xmlns:converters="clr-namespace:MachineStatusApplication.Converters"
+        xmlns:VM="clr-namespace:MachineStatusApplication.ViewModels"
+        Title="Machine statuses" Height="780" Width="1300">
+    <Window.DataContext>
+        <VM:MachineStatusesViewModel />
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Border Grid.ColumnSpan="2" Grid.RowSpan="2" Background="#d2e3ec" />
+        <Grid Grid.ColumnSpan="2">
+
+            <TextBlock Text="Machine statuses" VerticalAlignment="Bottom" HorizontalAlignment="Center" Foreground="#3c7782" FontWeight="ExtraBold" Margin="10" FontSize="32"/>
+        </Grid>
+        <Grid x:Name="filter_options" Grid.Row="1" Height="100">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="8*"/>
+                <ColumnDefinition Width="21*"/>
+                <ColumnDefinition Width="21*"/>
+                <ColumnDefinition Width="21*"/>
+                <ColumnDefinition Width="21*"/>
+                <ColumnDefinition Width="8*"/>
+            </Grid.ColumnDefinitions>
+
+            <controls:FilterMachineButton x:Name="camerasCountTotal" Text="All Machines" Command="{Binding FilterCommand}" CommandParameter="All" IsChecked="True" ImageSource="/images/machines.jpeg" Grid.Column="1"></controls:FilterMachineButton>
+            <controls:FilterMachineButton x:Name="camerasCountConnected" Text="Running Machines" Command="{Binding FilterCommand}" CommandParameter="Running"  ImageSource="/images/Running.png" Grid.Column="2"></controls:FilterMachineButton>
+            <controls:FilterMachineButton x:Name="camerasCountError" Text="Offline Machines" Command="{Binding FilterCommand}" CommandParameter="Offline"  ImageSource="/images/Offline2.png" Grid.Column="3"></controls:FilterMachineButton>
+            <controls:FilterMachineButton x:Name="camerasCountDisonnected" Text="Idle Machines" Command="{Binding FilterCommand}" CommandParameter="Idle"  ImageSource="/images/Idle.png" Grid.Column="4"></controls:FilterMachineButton>
+        </Grid>
+        <Button x:Name="add_new" Style="{DynamicResource AddNewButton}" Command="{Binding OpenAddMachinePopupCommand}" Grid.ColumnSpan="6" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="35 0">
+            <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontFamily="Open Sans" FontSize="24">+</TextBlock>
+                    <TextBlock FontFamily="Open Sans" FontSize="15" Margin="10,0,0,0">Add New</TextBlock>
+                </StackPanel>
+            </Button.Content>
+        </Button>
+        <ScrollViewer Grid.Column="1" Grid.Row="3" >
+            <StackPanel>
+                <StackPanel Margin="20 0">
+                    <ItemsControl x:Name="ListViewProducts" ItemsSource="{Binding MachineList, UpdateSourceTrigger=PropertyChanged}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="10" Width="260" Height="280">
+                                    <StackPanel>
+                                        <Border Width="250" Height="270" CornerRadius="5" BorderThickness="1" BorderBrush="#d2e3ec" Margin="5" Background="White">
+                                            <Border.Effect>
+                                                <DropShadowEffect ShadowDepth="1"/>
+                                            </Border.Effect>
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="55"/>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="50"/>
+                                                </Grid.RowDefinitions>
+                                                <Grid Background="WhiteSmoke">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="30"/>
+                                                        <RowDefinition Height="25"/>
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Margin="5" Text="{Binding Name}" FontWeight="Bold" Foreground="#3c7782" FontSize="20"/>
+                                                    <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
+                                                        <Image>
+                                                            <Image.Style>
+                                                                <Style TargetType="Image">
+                                                                    <Setter Property="Source" Value="/Images/Running.png"/>
+                                                                    <Setter Property="Width" Value="18"/>
+                                                                    <Setter Property="Height" Value="18"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="Idle">
+                                                                            <Setter Property="Source" Value="/Images/Idle.png"/>
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="Offline">
+                                                                            <Setter Property="Source" Value="/Images/Offline2.png"/>
+                                                                            <Setter Property="Width" Value="22"/>
+                                                                            <Setter Property="Height" Value="22"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Image.Style>
+                                                        </Image>
+                                                        <TextBlock Margin="5 0" Text="{Binding Status}" FontSize="15"/>
+                                                    </StackPanel>
+                                                </Grid>
+
+                                                <Grid Grid.Row="1">
+                                                    <StackPanel VerticalAlignment="Center">
+                                                        <StackPanel Width="200" HorizontalAlignment="Center">
+                                                            <TextBlock Text="Description: " FontSize="15" FontWeight="Bold"/>
+                                                            <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" Width="200">
+                                                                <TextBlock Width="198" Text="{Binding Description}" FontSize="14" TextWrapping="Wrap" />
+                                                            </StackPanel>
+                                                        </StackPanel>
+                                                        <StackPanel Width="200" HorizontalAlignment="Center" Grid.Row="1" Margin="0 10 0 0">
+                                                            <TextBlock Margin="5 0" Text="Note:" FontSize="15" FontWeight="Bold" />
+                                                            <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" Width="200">
+                                                                <TextBlock Width="198" Text="{Binding Note}" FontSize="14" TextWrapping="Wrap"/>
+                                                            </StackPanel>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Grid>
+                                                <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center">
+                                                    <Button  Style="{DynamicResource DeletEditButton}" Command="{Binding DataContext.OpenEditPopupCommand,ElementName=myWindow }" CommandParameter="{Binding}" Margin="0 0 0 0">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Image Width="25" Source="/Images/ED.png"/>
+                                                            <TextBlock Margin="10,0,0,0">Edit</TextBlock>
+                                                        </StackPanel>
+                                                    </Button>
+                                                    <Button  Style="{DynamicResource DeletEditButton}" Command="{Binding DataContext.DeleteCommand,ElementName=myWindow }" CommandParameter="{Binding}" Margin="0 0 0 0">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Image Width="22" Source="/Images/DE.png"/>
+                                                            <TextBlock Margin="10,0,0,0">Delete</TextBlock>
+                                                        </StackPanel>
+                                                    </Button>
+                                                </StackPanel>
+
+                                            </Grid>
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <controls:Popup x:Name="edit_popup" Visibility="{Binding EditPopupIsVisible, Converter={StaticResource booleanToVisibilityConverter}}" Panel.ZIndex="1000" Grid.RowSpan="5">
+            <StackPanel Margin="0,20,0,40">
+                <TextBlock Style="{StaticResource popupTitle}" HorizontalAlignment="Center" Text="Edit Machine"></TextBlock>
+                <TextBlock Style="{StaticResource popupTitle}" HorizontalAlignment="Center" Text="{Binding SelectedMchineModel.Name}"></TextBlock>
+                <StackPanel  Margin="10,20,10,0">
+                    <TextBlock Text="status" Style="{StaticResource textBoxDescriptions}"/>
+                    <TextBox HorizontalAlignment="Stretch" Text="{Binding SelectedMchineModel.Status}" Template="{StaticResource TextBoxBaseControlTemplate}" />
+                </StackPanel>
+                <StackPanel  Margin="10,20,10,0">
+                    <TextBlock Text="Description" Style="{StaticResource textBoxDescriptions}"/>
+                    <TextBox HorizontalAlignment="Stretch" Text="{Binding SelectedMchineModel.Description}" Template="{StaticResource TextBoxBaseControlTemplate}" />
+                </StackPanel>
+                <StackPanel  Margin="10,20,10,0">
+                    <TextBlock Text="Note" Style="{StaticResource textBoxDescriptions}"/>
+                    <TextBox HorizontalAlignment="Stretch" Text="{Binding SelectedMchineModel.Note}" Template="{StaticResource TextBoxBaseControlTemplate}" />
+                </StackPanel>
+                <StackPanel Margin="20,20,0,0" Width="auto" VerticalAlignment="Center" HorizontalAlignment="Center" Height="auto" Orientation="Horizontal">
+                    <Button Style="{DynamicResource saveButton}"  Command="{Binding UpdateCommand}" Margin="0,0,15,0">Save</Button>
+                    <Button Style="{DynamicResource cancelButton}" Command="{Binding CancelCommand}" >Cancel</Button>
+                </StackPanel>
+
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="red" HorizontalAlignment="Left" TextAlignment="Left"/>
+            </StackPanel>
+        </controls:Popup>
+
+        <controls:Popup x:Name="add_popup" Visibility="{Binding AddPopupIsVisible, Converter={StaticResource booleanToVisibilityConverter}}" Panel.ZIndex="1000" Grid.RowSpan="5">
+            <StackPanel Margin="0,20,0,40">
+                <TextBlock Style="{StaticResource popupTitle}" HorizontalAlignment="Center" Text="Add New Machine"></TextBlock>
+                <StackPanel  Margin="10,20,10,0">
+                    <TextBlock Text="Name" Style="{StaticResource textBoxDescriptions}"/>
+                    <TextBox HorizontalAlignment="Stretch" Text="{Binding NewMachineModel.Name}" Template="{StaticResource TextBoxBaseControlTemplate}" />
+                </StackPanel>
+                <StackPanel  Margin="10,20,10,0">
+                    <TextBlock Text="Status" Style="{StaticResource textBoxDescriptions}"/>
+                    <TextBox HorizontalAlignment="Stretch" Text="{Binding NewMachineModel.Status}" Template="{StaticResource TextBoxBaseControlTemplate}" />
+                </StackPanel>
+                <StackPanel  Margin="10,20,10,0">
+                    <TextBlock Text="Description" Style="{StaticResource textBoxDescriptions}"/>
+                    <TextBox HorizontalAlignment="Stretch" Text="{Binding NewMachineModel.Description}" Template="{StaticResource TextBoxBaseControlTemplate}" />
+                </StackPanel>
+                <StackPanel  Margin="10,20,10,0">
+                    <TextBlock Text="Note" Style="{StaticResource textBoxDescriptions}"/>
+                    <TextBox HorizontalAlignment="Stretch" Text="{Binding NewMachineModel.Note}" Template="{StaticResource TextBoxBaseControlTemplate}" />
+                </StackPanel>
+                <StackPanel Margin="20,20,0,0" Width="auto" VerticalAlignment="Center" HorizontalAlignment="Center" Height="auto" Orientation="Horizontal">
+                    <Button Style="{DynamicResource saveButton}"  Command="{Binding AddNewCommand}" Margin="0,0,15,0">Add</Button>
+                    <Button Style="{DynamicResource cancelButton}" Command="{Binding CancelCommand}" >Cancel</Button>
+                </StackPanel>
+
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="red" HorizontalAlignment="Left" TextAlignment="Left"/>
+            </StackPanel>
+        </controls:Popup>
+        <StatusBar Background="#d2e3ec" Grid.Row="4" HorizontalAlignment="Center">
+            <StatusBarItem>
+                <TextBlock Text="{Binding NotificationMessage}" Foreground="#3c7782" HorizontalAlignment="Center" Background="Transparent"></TextBlock>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>
